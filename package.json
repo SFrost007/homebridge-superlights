@@ -1,0 +1,29 @@
+{
+  "name": "homebridge-superlights",
+  "description": "Homebridge plugin that exposes the Superlights bluetooth bulb as an accessory",
+  "author": "Simon Frost",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": [
+    "homebridge-plugin",
+    "bluetooth",
+    "bluetooth low energy",
+    "superlights",
+    "super lights",
+    "jasgood"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/SFrost007/homebridge-superlights.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SFrost007/homebridge-superlights/issues"
+  },
+  "engines": {
+    "node": ">=4.3.2",
+    "homebridge": ">=0.4.6"
+  },
+  "dependencies": {
+    "noble": ">=1.7.0"
+  }
+}
