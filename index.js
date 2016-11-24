@@ -185,6 +185,11 @@ SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, c
  * Functions for interacting directly with the lightbulb's RGB property
  **/
 SuperlightAccessory.prototype.readFromBulb = function(callback) {
+	if (this.nobleCharacteristic == null) {
+		this.log.warn("Bulb is not connected");
+		callback(false);
+		return;
+	}
 	this.nobleCharacteristic.read(function(error, buffer) {
 		if (error) {
 			this.log.warn("Read from bluetooth characteristic failed | " + error);
@@ -205,6 +210,11 @@ SuperlightAccessory.prototype.readFromBulb = function(callback) {
 }
 
 SuperlightAccessory.prototype.writeToBulb = function(callback) {
+	if (this.nobleCharacteristic == null) {
+		this.log.warn("Bulb is not connected");
+		callback(false);
+		return;
+	}
 	var rgb = this.hsv2rgb(this.hue, this.saturation, this.brightness);
 	this.log.info("Set | "
 		+ rgb.r + " " + rgb.g + " " + rgb.b
