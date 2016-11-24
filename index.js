@@ -133,8 +133,6 @@ SuperlightAccessory.prototype.nobleDiscovered = function(accessory) {
 		accessory.connect(function(error){
 			this.nobleConnected(error, accessory);
 		}.bind(this));
-	} else {
-		this.log.info("Skipping non-matching accessory at " + accessory.address);
 	}
 }
 
@@ -143,9 +141,13 @@ SuperlightAccessory.prototype.nobleConnected = function(error, accessory) {
 		this.log.warn("Noble connection failed: " + error);
 		return;
 	}
+	this.log.info("Connection success, stopping Noble scan.");
+	Noble.stopScanning();
 	accessory.discoverServices([SUPERLIGHTS_SERVICE], this.nobleServicesDiscovered.bind(this));
 	accessory.on('disconnect', function(error) {
 		this.nobleDisconnected(error, accessory);
+		this.log.info("Restarting Noble scan..");
+		Noble.startScanning([], false);
 	}.bind(this));
 }
 
