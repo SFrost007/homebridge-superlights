@@ -62,6 +62,7 @@ SuperlightAccessory.prototype.identify = function(callback) {
  * Getters/setters for publicly exposed characteristics for the bulb
  **/
 SuperlightAccessory.prototype.setPowerState = function(powerState, callback) {
+	this.log.info("setPowerState: " + powerState);
 	this.powerState = powerState;
 	this.writeToBulb(function(){
 		callback(null);
@@ -69,6 +70,7 @@ SuperlightAccessory.prototype.setPowerState = function(powerState, callback) {
 }
 
 SuperlightAccessory.prototype.setBrightness = function(value, callback) {
+	this.log.info("setBrightness: " + value);
 	this.brightness = value;
 	this.writeToBulb(function(){
 		callback(null);
@@ -76,6 +78,7 @@ SuperlightAccessory.prototype.setBrightness = function(value, callback) {
 }
 
 SuperlightAccessory.prototype.setSaturation = function(value, callback) {
+	this.log.info("setSaturation: " + value);
 	this.saturation = value;
 	this.writeToBulb(function(){
 		callback(null);
@@ -83,6 +86,7 @@ SuperlightAccessory.prototype.setSaturation = function(value, callback) {
 }
 
 SuperlightAccessory.prototype.setHue = function(value, callback) {
+	this.log.info("setHue: " + value);
 	this.hue = value;
 	this.writeToBulb(function(){
 		callback(null);
@@ -176,7 +180,9 @@ SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, c
 			this.log.info("Found RGB Characteristic: " + characteristic.uuid);
 			this.nobleCharacteristic = characteristic;
 			this.readFromBulb(function(error){
-				this.log.info("Read initial values: " + this.hue + ", " + this.saturation + ", " + this.brightness);
+				this.log.info("Read initial values: " 
+					+ "hsv("+this.hue+","+this.saturation+","+this.brightness+") "
+					+ "(" + this.powerState ? "On" : "Off" + ")");
 			}.bind(this));
 		}
 	}
@@ -202,11 +208,14 @@ SuperlightAccessory.prototype.readFromBulb = function(callback) {
 		var g = buffer.readUInt8(2);
 		var b = buffer.readUInt8(3);
 
-		this.log.info("Get | " + r + " " + g + " " + b);
 		var hsv = this.rgb2hsv(r, g, b);
 		this.hue = hsv.h;
 		this.saturation = hsv.s;
 		this.brightness = hsv.v;
+		this.log.info("Get: "
+			+ "rgb("+r+","+g+","+b+") "
+			+ "= hsv("+hsv.h+","+hsv.s+","+hsv.v+") "
+			+ "(" + (this.powerState ? "On" : "Off") + ")");
 		callback(null);
 	}.bind(this))
 }
@@ -218,9 +227,10 @@ SuperlightAccessory.prototype.writeToBulb = function(callback) {
 		return;
 	}
 	var rgb = this.hsv2rgb(this.hue, this.saturation, this.brightness);
-	this.log.info("Set | "
-		+ rgb.r + " " + rgb.g + " " + rgb.b
-		+ " (" + this.powerState ? "On" : "Off" + ")");
+	this.log.info("Set: "
+		+ "hsv("+this.hue+","+this.saturation+","+this.brightness+") "
+		+ "= rgb("+rgb.r+","+rgb.g+","+rgb.b+") "
+		+ "(" + (this.powerState ? "On" : "Off") + ")");
 
 	var buffer = Buffer.alloc(4);
 	buffer.writeUInt8(0xD0, 0);
