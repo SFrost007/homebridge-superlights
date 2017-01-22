@@ -95,26 +95,30 @@ SuperlightAccessory.prototype.setHue = function(value, callback) {
 
 SuperlightAccessory.prototype.getPowerState = function(callback) {
 	this.readFromBulb(function(error) {
-		callback(error, error ? null : this.powerState);
-	});
+		this.log.info("Returning from getPowerState: " + error === null ? "null" : this.powerState);
+		callback(error, error === null ? null : this.powerState);
+	}.bind(this));
 }
 
 SuperlightAccessory.prototype.getBrightness = function(callback) {
 	this.readFromBulb(function(error) {
-		callback(error, error ? null : this.brightness);
-	});
+		this.log.info("Returning from getBrightness: " + error === null ? "null" : this.brightness);
+		callback(error, error === null ? null : this.brightness);
+	}.bind(this));
 }
 
 SuperlightAccessory.prototype.getSaturation = function(callback) {
 	this.readFromBulb(function(error) {
-		callback(error, error ? null : this.saturation);
-	});
+		this.log.info("Returning from getSaturation: " + error === null ? "null" : this.saturation);
+		callback(error, error === null ? null : this.saturation);
+	}.bind(this));
 }
 
 SuperlightAccessory.prototype.getHue = function(callback) {
 	this.readFromBulb(function(error) {
-		callback(error, error ? null : this.hue);
-	});
+		this.log.info("Returning from getHue: " + error === null ? "null" : this.hue);
+		callback(error, error === null ? null : this.hue);
+	}.bind(this));
 }
 
 
