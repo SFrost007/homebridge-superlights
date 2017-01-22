@@ -152,7 +152,7 @@ SuperlightAccessory.prototype.nobleConnected = function(error, accessory) {
 }
 
 SuperlightAccessory.prototype.nobleDisconnected = function(error, accessory) {
-	this.log.info("Disconnected from " + accessory.address + ":" + error);
+	this.log.info("Disconnected from " + accessory.address + ": " + error);
 	accessory.removeAllListeners('disconnect');
 }
 
@@ -188,7 +188,7 @@ SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, c
  **/
 SuperlightAccessory.prototype.readFromBulb = function(callback) {
 	if (this.nobleCharacteristic == null) {
-		this.log.warn("Bulb is not connected");
+		this.log.warn("Characteristic not yet found. Skipping..");
 		callback(false);
 		return;
 	}
@@ -213,7 +213,7 @@ SuperlightAccessory.prototype.readFromBulb = function(callback) {
 
 SuperlightAccessory.prototype.writeToBulb = function(callback) {
 	if (this.nobleCharacteristic == null) {
-		this.log.warn("Bulb is not connected");
+		this.log.warn("Characteristic not yet found. Skipping..");
 		callback(false);
 		return;
 	}
