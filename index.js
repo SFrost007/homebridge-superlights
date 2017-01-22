@@ -220,6 +220,7 @@ SuperlightAccessory.prototype.readFromBulb = function(callback) {
 		this.hue = hsv.h;
 		this.saturation = hsv.s;
 		this.brightness = hsv.v;
+		this.powerState = hsv.v > 0;
 		this.log.debug("Get: "
 			+ "rgb("+r+","+g+","+b+") "
 			+ "= hsv("+hsv.h+","+hsv.s+","+hsv.v+") "
