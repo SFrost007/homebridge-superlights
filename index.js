@@ -94,29 +94,33 @@ SuperlightAccessory.prototype.setHue = function(value, callback) {
 }
 
 SuperlightAccessory.prototype.getPowerState = function(callback) {
+	this.log.debug("getPowerState called");
 	this.readFromBulb(function(error) {
-		this.log.info("Returning from getPowerState: " + error === null ? "null" : this.powerState);
+		this.log.debug("Returning from getPowerState: " + error === null ? "null" : this.powerState);
 		callback(error, error === null ? null : this.powerState);
 	}.bind(this));
 }
 
 SuperlightAccessory.prototype.getBrightness = function(callback) {
+	this.log.debug("getBrightness called");
 	this.readFromBulb(function(error) {
-		this.log.info("Returning from getBrightness: " + error === null ? "null" : this.brightness);
+		this.log.debug("Returning from getBrightness: " + error === null ? "null" : this.brightness);
 		callback(error, error === null ? null : this.brightness);
 	}.bind(this));
 }
 
 SuperlightAccessory.prototype.getSaturation = function(callback) {
+	this.log.debug("getSaturation called");
 	this.readFromBulb(function(error) {
-		this.log.info("Returning from getSaturation: " + error === null ? "null" : this.saturation);
+		this.log.debug("Returning from getSaturation: " + error === null ? "null" : this.saturation);
 		callback(error, error === null ? null : this.saturation);
 	}.bind(this));
 }
 
 SuperlightAccessory.prototype.getHue = function(callback) {
+	this.log.debug("getHue called");
 	this.readFromBulb(function(error) {
-		this.log.info("Returning from getHue: " + error === null ? "null" : this.hue);
+		this.log.debug("Returning from getHue: " + error === null ? "null" : this.hue);
 		callback(error, error === null ? null : this.hue);
 	}.bind(this));
 }
@@ -146,7 +150,7 @@ SuperlightAccessory.prototype.nobleDiscovered = function(accessory) {
 
 SuperlightAccessory.prototype.nobleConnected = function(error, accessory) {
 	if (error) {
-		this.log.warn("Noble connection failed: " + error);
+		this.log.error("Noble connection failed: " + error);
 		return;
 	}
 	this.log.info("Connection success, stopping Noble scan.");
@@ -166,7 +170,7 @@ SuperlightAccessory.prototype.nobleDisconnected = function(error, accessory) {
 
 SuperlightAccessory.prototype.nobleServicesDiscovered = function(error, services) {
 	if (error) {
-		this.log.warn("Noble service discovery failed: " + error);
+		this.log.error("Noble service discovery failed: " + error);
 		return;
 	}
 	for (var service of services) {
@@ -176,7 +180,7 @@ SuperlightAccessory.prototype.nobleServicesDiscovered = function(error, services
 
 SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, characteristics) {
 	if (error) {
-		this.log.warn("Noble characteristic discovery failed: " + error);
+		this.log.error("Noble characteristic discovery failed: " + error);
 		return;
 	}
 	for (var characteristic of characteristics) {
@@ -184,7 +188,7 @@ SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, c
 			this.log.info("Found RGB Characteristic: " + characteristic.uuid);
 			this.nobleCharacteristic = characteristic;
 			this.readFromBulb(function(error){
-				this.log.info("Read initial values: " 
+				this.log.debug("Read initial values: " 
 					+ "hsv("+this.hue+","+this.saturation+","+this.brightness+") "
 					+ "(" + this.powerState ? "On" : "Off" + ")");
 			}.bind(this));
@@ -204,7 +208,7 @@ SuperlightAccessory.prototype.readFromBulb = function(callback) {
 	}
 	this.nobleCharacteristic.read(function(error, buffer) {
 		if (error) {
-			this.log.warn("Read from bluetooth characteristic failed | " + error);
+			this.log.error("Read from bluetooth characteristic failed | " + error);
 			callback(error);
 			return;
 		}
@@ -216,7 +220,7 @@ SuperlightAccessory.prototype.readFromBulb = function(callback) {
 		this.hue = hsv.h;
 		this.saturation = hsv.s;
 		this.brightness = hsv.v;
-		this.log.info("Get: "
+		this.log.debug("Get: "
 			+ "rgb("+r+","+g+","+b+") "
 			+ "= hsv("+hsv.h+","+hsv.s+","+hsv.v+") "
 			+ "(" + (this.powerState ? "On" : "Off") + ")");
@@ -231,7 +235,7 @@ SuperlightAccessory.prototype.writeToBulb = function(callback) {
 		return;
 	}
 	var rgb = this.hsv2rgb(this.hue, this.saturation, this.brightness);
-	this.log.info("Set: "
+	this.log.debug("Set: "
 		+ "hsv("+this.hue+","+this.saturation+","+this.brightness+") "
 		+ "= rgb("+rgb.r+","+rgb.g+","+rgb.b+") "
 		+ "(" + (this.powerState ? "On" : "Off") + ")");
