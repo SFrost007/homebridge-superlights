@@ -96,32 +96,32 @@ SuperlightAccessory.prototype.setHue = function(value, callback) {
 SuperlightAccessory.prototype.getPowerState = function(callback) {
 	this.log.debug("getPowerState called");
 	this.readFromBulb(function(error) {
-		this.log.debug("Returning from getPowerState: " + error === null ? "null" : this.powerState);
-		callback(error, error === null ? null : this.powerState);
+		this.log.debug("Returning from getPowerState: " + (error === null ? this.powerState : "ERROR"));
+		callback(error, error === null ? this.powerState : null);
 	}.bind(this));
 }
 
 SuperlightAccessory.prototype.getBrightness = function(callback) {
 	this.log.debug("getBrightness called");
 	this.readFromBulb(function(error) {
-		this.log.debug("Returning from getBrightness: " + error === null ? "null" : this.brightness);
-		callback(error, error === null ? null : this.brightness);
+		this.log.debug("Returning from getBrightness: " + (error === null ? this.brightness : "ERROR"));
+		callback(error, error === null ? this.brightness : null);
 	}.bind(this));
 }
 
 SuperlightAccessory.prototype.getSaturation = function(callback) {
 	this.log.debug("getSaturation called");
 	this.readFromBulb(function(error) {
-		this.log.debug("Returning from getSaturation: " + error === null ? "null" : this.saturation);
-		callback(error, error === null ? null : this.saturation);
+		this.log.debug("Returning from getSaturation: " + (error === null ? this.saturation : "ERROR"));
+		callback(error, error === null ? this.saturation : null);
 	}.bind(this));
 }
 
 SuperlightAccessory.prototype.getHue = function(callback) {
 	this.log.debug("getHue called");
 	this.readFromBulb(function(error) {
-		this.log.debug("Returning from getHue: " + error === null ? "null" : this.hue);
-		callback(error, error === null ? null : this.hue);
+		this.log.debug("Returning from getHue: " + (error === null ? this.hue : "ERROR"));
+		callback(error, error === null ? this.hue : null);
 	}.bind(this));
 }
 
