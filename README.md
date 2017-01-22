@@ -8,7 +8,9 @@ Plugin for [Homebridge](https://github.com/nfarina/homebridge) to support the [S
 1. Install Homebridge: `npm install -g --unsafe-perm homebridge`
 2. Install Noble: `npm install -g noble`
 3. Install homebridge-superlights: `npm install -g homebridge-superlights`
-4. Configure the plugin
+4. [Grant Node access to control BluetoothLE discovery](https://github.com/sandeepmistry/noble#running-without-rootsudo): 
+``sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)``
+5. Configure the plugin
 
 See the Homebridge [installation section](https://github.com/nfarina/homebridge#installation) for more details.
 
