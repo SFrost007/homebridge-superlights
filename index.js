@@ -190,7 +190,7 @@ SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, c
 			this.readFromBulb(function(error){
 				this.log.debug("Read initial values: " 
 					+ "hsv("+this.hue+","+this.saturation+","+this.brightness+") "
-					+ "(" + this.powerState ? "On" : "Off" + ")");
+					+ "(" + (this.powerState ? "On" : "Off") + ")");
 			}.bind(this));
 		}
 	}
