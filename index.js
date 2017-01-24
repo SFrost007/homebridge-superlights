@@ -46,6 +46,9 @@ function SuperlightAccessory(log, config) {
 	 **/
 	this.nobleCharacteristic = null;
 	Noble.on('stateChange', this.nobleStateChange.bind(this));
+
+	// Array for keeping track of callback objects
+	this.readCallbacks = [];
 }
 
 SuperlightAccessory.prototype.getServices = function() {
@@ -206,27 +209,43 @@ SuperlightAccessory.prototype.readFromBulb = function(callback) {
 		callback(false);
 		return;
 	}
-	this.nobleCharacteristic.read(function(error, buffer) {
-		if (error) {
-			this.log.error("Read from bluetooth characteristic failed | " + error);
-			callback(error);
-			return;
-		}
-		var r = buffer.readUInt8(1);
-		var g = buffer.readUInt8(2);
-		var b = buffer.readUInt8(3);
+	this.readCallbacks.push(callback);
 
-		var hsv = this.rgb2hsv(r, g, b);
-		this.hue = hsv.h;
-		this.saturation = hsv.s;
-		this.brightness = hsv.v;
-		this.powerState = hsv.v > 0;
-		this.log.debug("Get: "
-			+ "rgb("+r+","+g+","+b+") "
-			+ "= hsv("+hsv.h+","+hsv.s+","+hsv.v+") "
-			+ "(" + (this.powerState ? "On" : "Off") + ")");
-		callback(null);
-	}.bind(this))
+	if (this.readCallbacks.length > 1) {
+		this.log.debug("Outstanding 'readFromBulb' request already active."
+			+ " Adding callback to queue. (" + this.readCallbacks.length + ")");
+	} else {
+		this.log.debug("No callback queue, sending 'read' call to nobleCharacteristic");
+		this.nobleCharacteristic.read(function(error, buffer) {
+			this.log.debug("Executing noble 'read' callback");
+			if (error === null) {
+				this.log.debug("Got success response from characteristic: " + buffer);
+				var r = buffer.readUInt8(1);
+				var g = buffer.readUInt8(2);
+				var b = buffer.readUInt8(3);
+
+				var hsv = this.rgb2hsv(r, g, b);
+				this.hue = hsv.h;
+				this.saturation = hsv.s;
+				this.brightness = hsv.v;
+				this.powerState = hsv.v > 0;
+				this.log.debug("Get: "
+					+ "rgb("+r+","+g+","+b+") "
+					+ "= hsv("+hsv.h+","+hsv.s+","+hsv.v+") "
+					+ "(" + (this.powerState ? "On" : "Off") + ")");
+			} else {
+				this.log.error("Read from bluetooth characteristic failed: " + error);
+			}
+
+			this.log.debug("Sending result to " + this.readCallbacks.length + " queued callbacks");
+			this.readCallbacks.forEach(function(queuedCallback, index) {
+				queuedCallback(error);
+			});
+			this.log.debug("Clearing callback queue");
+			this.readCallbacks = [];
+		}.bind(this));
+	}
+
 }
 
 SuperlightAccessory.prototype.writeToBulb = function(callback) {
