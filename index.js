@@ -242,6 +242,9 @@ SuperlightAccessory.prototype.writeToBulb = function(callback) {
 		+ "(" + (this.powerState ? "On" : "Off") + ")");
 
 	var buffer = Buffer.alloc(4);
+	// The D0 below is a magic number which is prepended to the RGB code
+	// when using the Superlights app to set the BLE characteristic. Its
+	// value doesn't seem to be important for this bulb.
 	buffer.writeUInt8(0xD0, 0);
 	buffer.writeUInt8(this.powerState ? rgb.r : 0, 1);
 	buffer.writeUInt8(this.powerState ? rgb.g : 0, 2);
