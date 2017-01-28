@@ -138,6 +138,7 @@ SuperlightAccessory.prototype.nobleStateChange = function(state) {
 		Noble.startScanning([], false);
 		Noble.on("discover", this.nobleDiscovered.bind(this));
 	} else {
+		this.log.info("Noble state change to " + state + "; stopping scan.");
 		Noble.stopScanning();
 	}
 }
@@ -148,15 +149,14 @@ SuperlightAccessory.prototype.nobleDiscovered = function(accessory) {
 		accessory.connect(function(error){
 			this.nobleConnected(error, accessory);
 		}.bind(this));
+	} else {
+		this.log.debug("Found non-matching accessory " + accessory.address);
 	}
 }
 
 SuperlightAccessory.prototype.nobleConnected = function(error, accessory) {
-	if (error) {
-		this.log.error("Noble connection failed: " + error);
-		return;
-	}
-	this.log.info("Connection success, stopping Noble scan.");
+	if (error) return this.log.error("Noble connection failed: " + error);
+	this.log.info("Connection success, discovering services..");
 	Noble.stopScanning();
 	accessory.discoverServices([SUPERLIGHTS_SERVICE], this.nobleServicesDiscovered.bind(this));
 	accessory.on('disconnect', function(error) {
@@ -167,25 +167,19 @@ SuperlightAccessory.prototype.nobleConnected = function(error, accessory) {
 }
 
 SuperlightAccessory.prototype.nobleDisconnected = function(error, accessory) {
-	this.log.info("Disconnected from " + accessory.address + ": " + error);
+	this.log.info("Disconnected from " + accessory.address + ": " + (error ? error : "(No error)"));
 	accessory.removeAllListeners('disconnect');
 }
 
 SuperlightAccessory.prototype.nobleServicesDiscovered = function(error, services) {
-	if (error) {
-		this.log.error("Noble service discovery failed: " + error);
-		return;
-	}
+	if (error) return this.log.error("Noble services discovery failed: " + error);
 	for (var service of services) {
 		service.discoverCharacteristics([], this.nobleCharacteristicsDiscovered.bind(this));
 	}
 }
 
 SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, characteristics) {
-	if (error) {
-		this.log.error("Noble characteristic discovery failed: " + error);
-		return;
-	}
+	if (error) return this.log.error("Noble characteristic discovery failed: " + error);
 	for (var characteristic of characteristics) {
 		if (characteristic.uuid == SUPERLIGHTS_RGB_CHARACTERISTIC) {
 			this.log.info("Found RGB Characteristic: " + characteristic.uuid);
@@ -195,6 +189,8 @@ SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, c
 					+ "hsv("+this.hue+","+this.saturation+","+this.brightness+") "
 					+ "(" + (this.powerState ? "On" : "Off") + ")");
 			}.bind(this));
+		} else {
+			this.log.debug("Found non-matching characteristic: " + characteristic.uuid);
 		}
 	}
 }
