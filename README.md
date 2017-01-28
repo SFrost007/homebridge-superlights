@@ -48,3 +48,15 @@ In the above:
 
 ### 0.0.1
  * Initial version
+
+### 1.0.0
+ * Fixed issue where queries before the bulb is connected would cause a crash
+ * Fixed issue where we would continue scanning for devices after the bulb is found
+ * Fixed issue where incorrect values were returned from GET calls on characteristics
+ * Fixed warning about possible memory leak due to multiple 'read' listeners
+ * Added more useful debug information in logging messages
+ * Added missing instruction to README regarding Node permissions for BLE access
+
+## Known issues
+ * Sometimes BLE scan will disconnect and retry (several times) before the characteristic is found.
+ * With the Superlights bulb, brightness values below 10 will turn the bulb off
