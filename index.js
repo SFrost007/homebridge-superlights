@@ -149,6 +149,7 @@ SuperlightAccessory.prototype.nobleDiscovered = function(accessory) {
 		accessory.connect(function(error){
 			this.nobleConnected(error, accessory);
 		}.bind(this));
+	 	accessory.discoverServices([SUPERLIGHTS_SERVICE], this.nobleServicesDiscovered.bind(this));
 	} else {
 		this.log.debug("Found non-matching accessory " + accessory.address);
 	}
@@ -161,14 +162,14 @@ SuperlightAccessory.prototype.nobleConnected = function(error, accessory) {
 	accessory.discoverServices([SUPERLIGHTS_SERVICE], this.nobleServicesDiscovered.bind(this));
 	accessory.on('disconnect', function(error) {
 		this.nobleDisconnected(error, accessory);
-		this.log.info("Restarting Noble scan..");
-		Noble.startScanning([], false);
 	}.bind(this));
 }
 
 SuperlightAccessory.prototype.nobleDisconnected = function(error, accessory) {
 	this.log.info("Disconnected from " + accessory.address + ": " + (error ? error : "(No error)"));
 	accessory.removeAllListeners('disconnect');
+	this.log.info("Restarting Noble scan..");
+	Noble.startScanning([], false);
 }
 
 SuperlightAccessory.prototype.nobleServicesDiscovered = function(error, services) {
@@ -184,11 +185,7 @@ SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, c
 		if (characteristic.uuid == SUPERLIGHTS_RGB_CHARACTERISTIC) {
 			this.log.info("Found RGB Characteristic: " + characteristic.uuid);
 			this.nobleCharacteristic = characteristic;
-			this.readFromBulb(function(error){
-				this.log.debug("Read initial values: " 
-					+ "hsv("+this.hue+","+this.saturation+","+this.brightness+") "
-					+ "(" + (this.powerState ? "On" : "Off") + ")");
-			}.bind(this));
+			Noble.stopScanning();
 		} else {
 			this.log.debug("Found non-matching characteristic: " + characteristic.uuid);
 		}
