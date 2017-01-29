@@ -57,6 +57,9 @@ In the above:
  * Added more useful debug information in logging messages
  * Added missing instruction to README regarding Node permissions for BLE access
 
+ ### 1.0.1
+  * Minor revision to remove testing script from package
+
 ## Known issues
  * Sometimes BLE scan will disconnect and retry (several times) before the characteristic is found.
  * With the Superlights bulb, brightness values below 10 will turn the bulb off
