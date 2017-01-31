@@ -2,7 +2,7 @@
   "name": "homebridge-superlights",
   "description": "Homebridge plugin that exposes the Superlights bluetooth bulb as an accessory",
   "author": "Simon Frost",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "keywords": [
     "homebridge-plugin",

@@ -32,7 +32,8 @@ The configuration for this plugin is relatively straightforward; simply add the 
     {
       "accessory": "Superlight",
       "name": "Main Bedroom Light",
-      "address": "ff:ee:dd:cc:bb:aa"
+      "address": "ff:ee:dd:cc:bb:aa",
+      "minBrightness": 10
     }
   ]
 }
@@ -43,6 +44,7 @@ In the above:
 * "accessory" must be "Superlight"
 * "address" is the Bluetooth identifier of the bulb
 * "name" is a friendly name for the bulb, used by Homekit
+* "minBrightness" is an optional parameter to limit the minimum brightness sent to the bulb. Some bulbs turn off completely at low (<10%) brightness levels, so setting this parameter will adjust the requested brightness into the "settable" range.
 
 ## Changelog
 
@@ -57,9 +59,9 @@ In the above:
  * Added more useful debug information in logging messages
  * Added missing instruction to README regarding Node permissions for BLE access
 
- ### 1.0.1
+### 1.0.1
   * Minor revision to remove testing script from package
 
-## Known issues
- * Sometimes BLE scan will disconnect and retry (several times) before the characteristic is found.
- * With the Superlights bulb, brightness values below 10 will turn the bulb off
+### 1.0.2
+  * Add config parameter for minimum bulb brightness
+  * Minor text fixes

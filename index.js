@@ -15,6 +15,7 @@ function SuperlightAccessory(log, config) {
 	this.log = log;
 	this.name = config["name"]
 	this.address = config["address"]
+	this.minBrightness = config["minBrightness"];
 
 	/**
 	 * Initialise the HAP Lightbulb service and configure characteristic bindings
@@ -107,6 +108,11 @@ SuperlightAccessory.prototype.setPowerState = function(powerState, callback) {
 
 SuperlightAccessory.prototype.setBrightness = function(value, callback) {
 	this.log.info("setBrightness: " + value);
+	if (value > 0 && this.minBrightness !== undefined) {
+		// Adjust brightness level to fall within the usable range of the bulb
+		value = this.minBrightness + (value / 100) * (100 - this.minBrightness);
+		this.log.debug("... Adjusted to ranged value: " + value);
+	}
 	this.brightness = value;
 	this.writeToBulb(function(){
 		callback(null);
