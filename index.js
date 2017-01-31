@@ -186,8 +186,6 @@ SuperlightAccessory.prototype.nobleCharacteristicsDiscovered = function(error, c
 			this.log.info("Found RGB Characteristic: " + characteristic.uuid);
 			this.nobleCharacteristic = characteristic;
 			Noble.stopScanning();
-		} else {
-			this.log.debug("Found non-matching characteristic: " + characteristic.uuid);
 		}
 	}
 }
@@ -212,7 +210,7 @@ SuperlightAccessory.prototype.readFromBulb = function(callback) {
 		this.nobleCharacteristic.read(function(error, buffer) {
 			this.log.debug("Executing noble 'read' callback");
 			if (error === null) {
-				this.log.debug("Got success response from characteristic: " + buffer);
+				this.log.debug("Got success response from characteristic");
 				var r = buffer.readUInt8(1);
 				var g = buffer.readUInt8(2);
 				var b = buffer.readUInt8(3);
