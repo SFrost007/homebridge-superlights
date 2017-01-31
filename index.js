@@ -49,6 +49,9 @@ function SuperlightAccessory(log, config) {
 
 	// Array for keeping track of callback objects
 	this.readCallbacks = [];
+
+	// Wrapper for storing previous values before running 'identify' flash
+	this.preIdentifyValues = {};
 }
 
 SuperlightAccessory.prototype.getServices = function() {
@@ -56,9 +59,39 @@ SuperlightAccessory.prototype.getServices = function() {
 }
 
 SuperlightAccessory.prototype.identify = function(callback) {
-	this.log("[" + this.name + "] Identify requested!");
-	// TODO: This could send a sequence of colour flashes to the bulb
-	callback(null);
+	this.log("Identify requested, flashing red -> green -> blue");
+	this.preIdentifyValues = {
+		hue: this.hue,
+		brightness: this.brightness,
+		saturation: this.saturation,
+		powerState: this.powerState
+	};
+	this.flash(255,0,0,500, function(){
+		this.flash(0,255,0,500, function(){
+			this.flash(0,0,255,500, function(){
+				this.hue = this.preIdentifyValues.hue;
+				this.brightness = this.preIdentifyValues.brightness;
+				this.saturation = this.preIdentifyValues.saturation;
+				this.powerState = this.preIdentifyValues.powerState;
+				this.writeToBulb(function(){
+					callback(null);
+				}.bind(this));
+			}.bind(this));
+		}.bind(this));
+	}.bind(this));
+}
+
+SuperlightAccessory.prototype.flash = function(r,g,b,duration,callback) {
+	var hsv = this.rgb2hsv(r,g,b);
+	this.hue = hsv.h;
+	this.saturation = hsv.s;
+	this.brightness = hsv.v;
+	this.powerState = true;
+	this.writeToBulb(function(){
+		setTimeout(function(){
+			callback();
+		}, duration);
+	});
 }
 
 /**
